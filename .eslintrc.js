@@ -19,6 +19,6 @@ module.exports = {
   rules: {
     "comma-dangle": ["error", "never"],
     "no-param-reassign": ["error", { "props": false }],
-    "vue/max-attributes-per-line": "off"
+    
   },
 };
