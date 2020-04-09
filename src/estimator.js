@@ -5,12 +5,15 @@ const covid19ImpactEstimator = (data) => {
   const income = data.region.avgDailyIncomeInUSD;
   const population = data.region.avgDailyIncomePopulation;
   // Normalize timeToElapse to days
-  if (data.periodType === 'weeks') {
-    data.timeToElapse *= 7;
-  } else if (data.periodType === 'months') {
-    data.timeToElapse *= 30;
+  let days;
+  if (data.periodType === 'days') {
+    days = data.timeToElapse;
+  } else if (data.periodType === 'weeks') {
+    days = 7 * data.timeToElapse;
   }
-  const days = data.timeToElapse;
+  if (data.periodType === 'months') {
+    days = 30 * data.timeToElapse;
+  }
   const factor = Math.trunc(days / 3);
   impact.currentlyInfected = data.reportedCases * 10;
   severeImpact.currentlyInfected = data.reportedCases * 50;
@@ -20,8 +23,8 @@ const covid19ImpactEstimator = (data) => {
   severeImpact.severeCasesByRequestedTime = 0.15 * severeImpact.infectionsByRequestedTime;
 
   const severecases = severeImpact.severeCasesByRequestedTime;
-  impact.hospitalBedsByRequestedTime = Math.ceil(beds - impact.severeCasesByRequestedTime);
-  severeImpact.hospitalBedsByRequestedTime = Math.ceil(beds - severecases);
+  impact.hospitalBedsByRequestedTime = Math.trunc(beds - impact.severeCasesByRequestedTime);
+  severeImpact.hospitalBedsByRequestedTime = Math.trunc(beds - severecases);
 
   impact.casesForICUByRequestedTime = 0.05 * impact.infectionsByRequestedTime;
   severeImpact.casesForICUByRequestedTime = 0.05 * severeImpact.infectionsByRequestedTime;
