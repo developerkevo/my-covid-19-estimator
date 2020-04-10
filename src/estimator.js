@@ -33,7 +33,7 @@ const covid19ImpactEstimator = (data) => {
 
   const severeInfectionsByRequestedTime = severeImpact.infectionsByRequestedTime;
 
-  impact.dollarsInFlight = (impact.InfectionByRequestTime * income * population * days);
+  impact.dollarsInFlight = Math.trunc(impact.InfectionByRequestTime * income * population * days);
   severeImpact.dollarsInFlight = severeInfectionsByRequestedTime * income * population * days;
 
 
