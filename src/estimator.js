@@ -2,8 +2,8 @@ const covid19ImpactEstimator = (data) => {
   const impact = {};
   const severeImpact = {};
   const beds = (0.35 * data.totalHospitalBeds);
-  // const income = data.region.avgDailyIncomeInUSD;
-  // const population = data.region.avgDailyIncomePopulation;
+  const income = data.region.avgDailyIncomeInUSD;
+  const population = data.region.avgDailyIncomePopulation;
   // Normalize timeToElapse to days
   let days;
   if (data.periodType === 'days') {
@@ -34,9 +34,8 @@ const covid19ImpactEstimator = (data) => {
   const severeInfectionsByRequestedTime = severeImpact.infectionsByRequestedTime;
   // impact.dollarsInFlight = impact.infectionsByRequestedTime * income * population * days;
   impact.dollarsInFlight = Math.round((impact.InfectionByRequestTime * 0.65 * 1.5) / 30).toFixed(2);
-  // severeImpact.dollarsInFlight = severeInfectionsByRequestedTime * income * population * days;
+  severeImpact.dollarsInFlight = severeInfectionsByRequestedTime * income * population * days;
 
-  severeImpact.dollarsInFlight = Math.round((severeInfectionsByRequestedTime * 0.65 * 1.5) / 30);
 
   return {
     data,
