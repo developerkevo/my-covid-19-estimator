@@ -13,7 +13,7 @@ const covid19ImpactEstimator = (data) => {
   } else if (data.periodType === 'months') {
     days = 30 * data.timeToElapse;
   }
-  const factor = Math.truncate(days / 3);
+  const factor = Math.trunc(days / 3);
   impact.currentlyInfected = data.reportedCases * 10;
   severeImpact.currentlyInfected = data.reportedCases * 50;
   impact.infectionsByRequestedTime = impact.currentlyInfected * (2 ** factor);
@@ -25,11 +25,11 @@ const covid19ImpactEstimator = (data) => {
   impact.hospitalBedsByRequestedTime = Math.trunc(beds - impact.severeCasesByRequestedTime);
   severeImpact.hospitalBedsByRequestedTime = Math.trunc(beds - severecases);
 
-  impact.casesForICUByRequestedTime = 0.05 * impact.infectionsByRequestedTime;
-  severeImpact.casesForICUByRequestedTime = 0.05 * severeImpact.infectionsByRequestedTime;
+  impact.casesForICUByRequestedTime = Math.round(0.05 * impact.infectionsByRequestedTime);
+  severeImpact.casesForICUByRequestedTime = Math.round(0.05 * severeImpact.infectionsByRequestedTime);
 
-  impact.casesForVentilatorsByRequestedTime = 0.02 * impact.infectionsByRequestedTime;
-  severeImpact.casesForVentilatorsByRequestedTime = 0.02 * impact.infectionsByRequestedTime;
+  impact.casesForVentilatorsByRequestedTime = Math.round(0.02 * impact.infectionsByRequestedTime);
+  severeImpact.casesForVentilatorsByRequestedTime = Math.round(0.02 * impact.infectionsByRequestedTime);
 
   const severeInfectionsByRequestedTime = severeImpact.infectionsByRequestedTime;
   impact.dollarsInFlight = impact.infectionsByRequestedTime * income * population * days;
