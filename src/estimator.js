@@ -1,47 +1,95 @@
-const covid19ImpactEstimator = (data) => {
-  const impact = {};
-  const severeImpact = {};
-  const beds = (0.35 * data.totalHospitalBeds);
-  const income = data.region.avgDailyIncomeInUSD;
-  const population = data.region.avgDailyIncomePopulation;
-  // Normalize timeToElapse to days
-  let days;
-  if (data.periodType === 'days') {
-    days = data.timeToElapse;
-  } else if (data.periodType === 'weeks') {
-    days = 7 * data.timeToElapse;
-  } else if (data.periodType === 'months') {
-    days = 30 * data.timeToElapse;
+const convertToDays = (periodType, timeToElapse) => {
+  switch (periodType) {
+    case 'weeks':
+      return timeToElapse * 7;
+    case 'months':
+      return timeToElapse * 30;
+    default:
+      return timeToElapse;
   }
+};
+
+const fifteenPercent = (infectionsByRequestedTime) => Math.trunc(0.15 * infectionsByRequestedTime);
+
+const availableBeds = (totalHospitalBeds, severeCasesByRequestedTime) => {
+  const availableBedSpace = 0.35 * totalHospitalBeds;
+  return Math.trunc(availableBedSpace - severeCasesByRequestedTime);
+};
+
+const ICUcare = (infectionsByRequestedTime) => Math.trunc(0.05 * infectionsByRequestedTime);
+
+const ventilators = (infectionsByRequestedTime) => Math.trunc(0.02 * infectionsByRequestedTime);
+
+const dollarsInFlightCalc = (
+  infectionsByRequestedTime,
+  avgDailyIncome,
+  avgDailyIncomePercent,
+  days
+) => {
+  const value = (infectionsByRequestedTime * avgDailyIncome * avgDailyIncomePercent) / days;
+  return Math.trunc(value);
+};
+
+const covid19ImpactEstimator = (data) => {
+  const outputData = {
+    data: null,
+    impact: {},
+    severeImpact: {}
+  };
+
+  const {
+    timeToElapse,
+    reportedCases,
+    periodType,
+    totalHospitalBeds
+  } = data;
+  const { avgDailyIncomeInUSD, avgDailyIncomePopulation } = data.region;
+  const { impact, severeImpact } = outputData;
+  outputData.data = data;
+  impact.currentlyInfected = reportedCases * 10;
+  severeImpact.currentlyInfected = reportedCases * 50;
+  const days = convertToDays(periodType, timeToElapse);
   const factor = 2 ** Math.trunc(days / 3);
-  impact.currentlyInfected = data.reportedCases * 10;
-  severeImpact.currentlyInfected = data.reportedCases * 50;
   impact.infectionsByRequestedTime = impact.currentlyInfected * factor;
   severeImpact.infectionsByRequestedTime = severeImpact.currentlyInfected * factor;
-  impact.severeCasesByRequestedTime = 0.15 * impact.infectionsByRequestedTime;
-  severeImpact.severeCasesByRequestedTime = 0.15 * severeImpact.infectionsByRequestedTime;
-
-  const severecases = severeImpact.severeCasesByRequestedTime;
-  impact.hospitalBedsByRequestedTime = Math.trunc(beds - impact.severeCasesByRequestedTime);
-  severeImpact.hospitalBedsByRequestedTime = Math.trunc(beds - severecases);
-
-  impact.casesForICUByRequestedTime = (0.05 * impact.infectionsByRequestedTime);
-  severeImpact.casesForICUByRequestedTime = (0.05 * severeImpact.infectionsByRequestedTime);
-
-  impact.casesForVentilatorsByRequestedTime = Math.trunc(0.02 * impact.infectionsByRequestedTime);
-  severeImpact.casesForVentilatorsByRequestedTime = 0.02 * impact.infectionsByRequestedTime;
-
-  const severeInfectionsByRequestedTime = severeImpact.infectionsByRequestedTime;
-
-  impact.dollarsInFlight = (impact.InfectionByRequestTime * income * population * days);
-  severeImpact.dollarsInFlight = severeInfectionsByRequestedTime * income * population * days;
-
-
-  return {
-    data,
-    impact,
-    severeImpact
-  };
+  impact.severeCasesByRequestedTime = fifteenPercent(
+    impact.infectionsByRequestedTime
+  );
+  severeImpact.severeCasesByRequestedTime = fifteenPercent(
+    severeImpact.infectionsByRequestedTime
+  );
+  impact.hospitalBedsByRequestedTime = availableBeds(
+    totalHospitalBeds,
+    impact.severeCasesByRequestedTime
+  );
+  severeImpact.hospitalBedsByRequestedTime = availableBeds(
+    totalHospitalBeds,
+    severeImpact.severeCasesByRequestedTime
+  );
+  impact.casesForICUByRequestedTime = ICUcare(impact.infectionsByRequestedTime);
+  severeImpact.casesForICUByRequestedTime = ICUcare(
+    severeImpact.infectionsByRequestedTime
+  );
+  impact.casesForVentilatorsByRequestedTime = ventilators(
+    impact.infectionsByRequestedTime
+  );
+  severeImpact.casesForVentilatorsByRequestedTime = ventilators(
+    severeImpact.infectionsByRequestedTime
+  );
+  impact.dollarsInFlight = dollarsInFlightCalc(
+    impact.infectionsByRequestedTime,
+    avgDailyIncomePopulation,
+    avgDailyIncomeInUSD,
+    days
+  );
+  severeImpact.dollarsInFlight = dollarsInFlightCalc(
+    severeImpact.infectionsByRequestedTime,
+    avgDailyIncomePopulation,
+    avgDailyIncomeInUSD,
+    days
+  );
+  return outputData;
 };
+
 
 export default covid19ImpactEstimator;
