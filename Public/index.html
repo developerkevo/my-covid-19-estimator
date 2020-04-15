@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Capstone">
+    <meta name="Fred Nyakagwa" content="Owner">
+    <meta name="keywords" content="SDG">
+    <!--<link rel="stylesheet" href="css/style.css">-->
+    <style>
+body {
+    font-family: cursive;
+}
+
+header {
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  margin-top: 10px;
+  padding: 20px;
+}
+
+footer{
+  padding:20px;
+  margin-top:20px;
+  color:#000;
+  background-color:#fff;
+  text-align: center;
+}
+
+header p {
+  text-align: center;
+}
+
+.sub {
+    background-color: darkgray;
+    border-radius: 5px;
+    margin-top: 1rem;
+    padding: 30px;
+    width: 50%;
+    margin: 50px auto;
+}
+
+header h1 {
+    font-size: 60px;
+    text-align: center;
+}
+
+input[type="text"]{
+  padding:4px;
+  height:25px;
+  width: 80%;
+  border-radius: 5px;
+  margin: 0px 50px;
+}
+
+#data-period-type {
+  height:40px;
+  width: 82%;
+  border-radius: 5px;
+  margin: 0px 50px 10px; 
+}
+
+#data-go-estimate {
+    text-align: center;
+    height:38px;
+    background:#000;
+    border:0;
+    width: 100%;
+    color:#fff;
+    border-radius: 2px;
+}
+
+.form {
+  border: #b9a099;
+  border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+    </style>
+    <title>Building for SDGs</title>
+</head>
+
+
+<body>
+        <header>
+            <h1> COVID-19  Novelty Estimator</h1>
+
+            
+        </header>
+    
+    <div class="sub">
+        <form action="" class="form">
+            <fieldset>
+                <legend>The COVID 19 Novelty Estimator:</legend>
+                <label for="data-population">Population:</label><br>
+                <input type="text" data-population="population" name="Population"id="data-population" placeholder="Enter population for region/city..." required><br>
+
+                <label for="data-time-to-elapse">Time To Elapse:</label><br>
+                <input type="text" data-time-to-elapse="timeToElapse" name="Period" id="data-time-to-elapse" placeholder="Enter Time in Days/Weeks/Months..." required><br>
+
+                <label for="data-reported-cases">Reported Cases:</label><br>
+                <input type="text" data-reported-cases="reportedCases" name="Reported Cases" id="data-reported-cases" placeholder="Home many reported cases?" required><br>
+
+                <label for="data-total-hospital-beds">Total Hospital Beds:</label><br>
+                <input type="text" data-total-hospital-beds="totalHospitalBeds" name="Beds" id="data-total-hospital-beds" placeholder="How many availaible beds?" required><br>
+
+                <label for="data-period-type">Period Type:</label><br>
+                <select data-period-type="periodType" id="data-period-type" name="periodType" required>
+                    <option value="Days">Days</option>
+                    <option value="Weeks">Weeks</option>
+                    <option value="Months">Months</option>
+                </select>
+
+                <input type="submit" data-go-estimate="data-go-estimate"  value="Check Estimates" id="data-go-estimate">
+            </fieldset>
+        </form>
+    </div>
+
+
+    <footer>
+        <p>The Covid19 Estimator - Building4SDGs Andela Project by Kihara Kevin, Copyright &copy; 2020</p>
+    </footer>
+</body>
+
+</html>
